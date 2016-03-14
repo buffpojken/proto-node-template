@@ -1,5 +1,10 @@
 // This is an interface between the editor and the graph library, in order
 // to support switching the graph engine between various libraries.
+
+// Issues 
+// * The event-stack in cytoscape triggers a "grab" on "tap" - which means that we get an 
+// erroneous "free" after tapping an event to open the content editor
+
  "use strict";
 
 window.$empty = function(){};

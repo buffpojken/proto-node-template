@@ -9,8 +9,7 @@ router.get('/', function(req, res){
 });
 
 router.post('/editor/node', function(req, res){
-	console.log("create node...")
-	console.log(req.body);
+	console.log("created node...")
 	res.send({});
 });
 

@@ -30,7 +30,7 @@ class AddNodeTool extends Tool{
 		if(e.originalEvent.shiftKey){
 			super.nodeClick(element, graph, e);
 		}else{
-			alert("open content editor...")
+			this.editor.openContentEditor(element);
 		}
 	}
 

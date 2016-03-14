@@ -43,7 +43,7 @@ class Editor{
 		});
 
 	}
-	
+
 	setTool(){
 		this.currentTool = new AddNodeTool(this)
 	}
@@ -61,7 +61,8 @@ class Editor{
 		this.graph.removeEdge(edge)		
 	}
 
-	// Callbacks for persisting stuff! Note that this is entirely independent of the graph-library actually used!
+	// Callbacks for persisting stuff! Note that this is entirely independent of the graph-library actually used (since id/position can 
+	// easily be converted into separate arguments, using whatever data-model the final graph-lib uses)
 	// (Note - make sure this uses a queue-model later on, to ensure proper order of operations even on unreliable connections!)
 	onNodeAdded(node){
 		this.remote.post("node", {
@@ -117,8 +118,14 @@ class Editor{
 		});
 	}
 
-}
+	// Content Management
 
+	openContentEditor(element){
+		this.contentEditor = true
+		console.log("manage content editing for...")
+	}
+
+}
 
 
 $(function(){
