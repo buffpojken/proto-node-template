@@ -4,7 +4,7 @@ var router 				= express.Router();
 
 // Return HTML based on a template.
 router.get('/', function(req, res){
-	res.render('example/index', {monkey: moment().format()})
+	res.render('editor/index', {monkey: moment().format()})
 });
 
 // Return raw json.

@@ -18,7 +18,7 @@ GLOBAL.logger = new (winston.Logger)({
 var app					 = express(); 
 
 // Setup app with http body parsing, multibody (file upload) management, and a static folder.
-app.use(bodyParse.urlencoded({extended: false})); 
+app.use(bodyParse.urlencoded({extended: true})); 
 app.use(multer())
 app.use(express.static(path.join(__dirname, 'public'))); 
 
