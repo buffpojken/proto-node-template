@@ -1,0 +1,24 @@
+{
+  "development": {
+    "username": "buffpojken",
+    "password": null,
+    "database": "pr2_prototype_dev",
+    "host": "127.0.0.1",
+    "dialect": "postgresql", 
+    "quoteIdentifiers": false
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "database_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "database_production",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}

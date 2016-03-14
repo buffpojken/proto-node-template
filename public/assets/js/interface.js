@@ -129,7 +129,10 @@ class Graph{
 
 		this.cy.on('remove', 'edge', (e) => {
 			if(this.draggingEdge){return;}
-			this.options.onEdgeRemoved(e.cyTarget);
+			const edge = e.cyTarget
+			if(!edge.source().removed() && !edge.target().removed()){
+				this.options.onEdgeRemoved(e.cyTarget);
+			}
 		});
 
 		this.cy.edgehandles({

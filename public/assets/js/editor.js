@@ -99,8 +99,7 @@ class Editor{
 
 	onNodeRemoved(node){
 		this.remote.delete("node", {
-			id: 				node.id(), 
-			position: 	node.position()
+			id: 				node.id()
 		}).then(result => {
 			console.log(result);
 		}).catch(error => {
@@ -110,7 +109,8 @@ class Editor{
 
 	onEdgeRemoved(edge){
 		this.remote.delete("edge", {
-			id: 				edge.id()
+			source: 		edge.source().id(),
+			target: 		edge.target().id()
 		}).then(result => {
 			console.log(result);
 		}).catch(error => {
