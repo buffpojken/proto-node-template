@@ -21,9 +21,12 @@ class Graph{
 		}, opts);
 	}
 
-	addNode(position){
+	addNode(position, id){
 		this.cy.add({
 			group: 'nodes', 
+			data: {
+				id: id
+			},
 			renderedPosition: position
 		})
 	}

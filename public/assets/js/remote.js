@@ -19,7 +19,6 @@ class Remote{
 				type: 'GET', 
 				dataType: 'json',
 				success: function(data){
-					console.log(data)
 					resolve(data)
 				}, 
 				error: function(){
