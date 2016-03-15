@@ -36,39 +36,40 @@ class Graph{
 		this.cy.remove(element)
 	}
 
-	build(){
+	build(el){
 		this.cy = cytoscape({
 				container: this.element, 
-				elements: [
-				{
-					group: 'nodes', 
-					data: {
-						id: 'n1'	  			
-					}, 
-					position: {
-						x: 100, 
-						y: 100
-					}, 
-				}, 
-				{
-					group: 'nodes', 
-					data: {
-						id: 'n2'
-					}, 
-					position: {
-						x: 200, 
-						y: 100
-					}
-				}, 
-				{
-					group: 'edges',
-					data: {
-						id: 'e1', 
-						source: 'n1', 
-						target: 'n2'					
-					}
-				}
-				], 
+				elements:el,
+				// elements: [
+				// {
+				// 	group: 'nodes', 
+				// 	data: {
+				// 		id: 'n1'	  			
+				// 	}, 
+				// 	position: {
+				// 		x: 100, 
+				// 		y: 100
+				// 	}, 
+				// }, 
+				// {
+				// 	group: 'nodes', 
+				// 	data: {
+				// 		id: 'n2'
+				// 	}, 
+				// 	position: {
+				// 		x: 200, 
+				// 		y: 100
+				// 	}
+				// }, 
+				// {
+				// 	group: 'edges',
+				// 	data: {
+				// 		id: 'e1', 
+				// 		source: 'n1', 
+				// 		target: 'n2'					
+				// 	}
+				// }
+				// ], 
 				layout: {
 					name: 'preset', 
 					fit: false

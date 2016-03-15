@@ -11,6 +11,24 @@ class Remote{
 		return this;
 	}
 
+	get(url){
+		var url = `${this.baseURL}/${url}`
+		return new Promise(function(resolve, reject){
+			$.ajax({
+				url: url, 
+				type: 'GET', 
+				dataType: 'json',
+				success: function(data){
+					console.log(data)
+					resolve(data)
+				}, 
+				error: function(){
+					reject();
+				}
+			})
+		});
+	}
+
 	post(url, data){
 		var url = `${this.baseURL}/${url}`
 		return new Promise(function(resolve, reject){
