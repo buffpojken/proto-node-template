@@ -4,8 +4,8 @@ class Editor{
 	constructor(options){
 		this.options = options;
 		this.graph = new Graph(document.getElementById('editor'), {
-//			onNodeAdded: 		this.onNodeAdded.bind(this),
-//			onEdgeAdded: 		this.onEdgeAdded.bind(this), 
+			onNodeAdded: 		this.onNodeAdded.bind(this),
+			onEdgeAdded: 		this.onEdgeAdded.bind(this), 
 			onNodeMoved: 		this.onNodeMoved.bind(this),
 			onNodeRemoved: 	this.onNodeRemoved.bind(this), 
 			onEdgeRemoved: 	this.onEdgeRemoved.bind(this)
@@ -68,27 +68,27 @@ class Editor{
 	// easily be converted into separate arguments, using whatever data-model the final graph-lib uses)
 	// (Note - make sure this uses a queue-model later on, to ensure proper order of operations even on unreliable connections!)
 
-	// onNodeAdded(node){
-	// 	this.remote.post("node", {
-	// 		id: 				node.id(), 
-	// 		position: 	node.position()
-	// 	}).then(value => {
-	// 		console.log("node added...");
-	// 	}).catch(error => {
-	// 		console.error(error);
-	// 	});
-	// }
+	onNodeAdded(node){
+		this.remote.post("node", {
+			id: 				node.id(), 
+			position: 	node.position()
+		}).then(value => {
+			console.log("node added...");
+		}).catch(error => {
+			console.error(error);
+		});
+	}
 
-	// onEdgeAdded(source, targets, added){
-	// 	this.remote.post("edge", {
-	// 		source: source.id(), 
-	// 		target: targets.id()
-	// 	}).then(result => {
-	// 		console.log("edge added")
-	// 	}).catch(error => {
+	onEdgeAdded(source, targets, added){
+		this.remote.post("edge", {
+			source: source.id(), 
+			target: targets.id()
+		}).then(result => {
+			console.log("edge added")
+		}).catch(error => {
 
-	// 	});
-	// }
+		});
+	}
 
 	onNodeMoved(node){
 		this.remote.put("node", {

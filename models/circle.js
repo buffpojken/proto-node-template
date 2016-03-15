@@ -22,7 +22,7 @@ module.exports = function(sequelize, DataTypes) {
       fetch: function(node){
         return new Promise(function(resolve, reject){
           const query = [
-            "MATCH (item {circle_id:{circle_id}}) RETURN item UNION MATCH (k)-[item:PATH {circle_id:{circle_id}}]->() RETURN item"
+            "MATCH (item {circle_id:{circle_id}}) RETURN item UNION MATCH (source)-[rel:PATH {circle_id:{circle_id}}]->(target) RETURN collect([target.uuid, source.uuid, id(rel)]) as item"
           ].join("\n"); 
           neo.cypher({
             query:        query,
@@ -38,24 +38,16 @@ module.exports = function(sequelize, DataTypes) {
           });
         });
       },
-      munge: function(graphset){
+      munge: function(graphset){  
         return new Promise(function(resolve, reject){          
-          resolve(_.map(graphset, function(result){
+          const relationData = graphset.pop();
+          let nodes = _.map(graphset, function(result){
             const item = result.item;
-            if(item.type == "PATH"){
-              return {
-                group: 'edges',
-                data: {
-                  id: item._id.toString(), 
-                  source: item._fromId, 
-                  target: item._toId          
-                }
-              }
-            }else{
+            if(item._id != null){
               return {
                 group: 'nodes', 
                 data: {
-                  id: item._id.toString(),       
+                  id: item.properties.uuid,       
                   uuid: item.properties.uuid
                 }, 
                 renderedPosition: {
@@ -64,7 +56,18 @@ module.exports = function(sequelize, DataTypes) {
                 }
               }
             }
-          }));
+          });
+          let relations = _.map(relationData.item, function(relation){
+            return {
+                group: 'edges',
+                data: {
+                  id:     relation[2],
+                  source: relation[0],
+                  target: relation[1]
+                }
+              }
+          })
+          resolve(nodes.concat(relations));
         });
       },
       addNode: function(node){
@@ -120,15 +123,17 @@ module.exports = function(sequelize, DataTypes) {
             "match (node:Node {uuid:{id}})",
             "set node = {data}"
           ].join("\n"); 
+          console.log(node);
           neo.cypher({
             query: query, 
             params: {
               id:      node.id,
               data: {
-                uuid:   node.id,
-                name:   "An example node", 
-                x:      node.position.x, 
-                y:      node.position.y
+                uuid:       node.id,
+                name:       "An example node", 
+                circle_id:  circle_id,
+                x:          node.position.x, 
+                y:          node.position.y
               }
             }
           }, function(err, results){
