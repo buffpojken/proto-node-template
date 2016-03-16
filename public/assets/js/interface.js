@@ -40,11 +40,12 @@ class Graph{
 	}
 
 	build(el){
+		console.log(el);
 		this.cy = cytoscape({
 				container: this.element,			
 				layout: {
 					name: 'preset', 
-					fit: false
+					fit: true
 				},
 				elements: el,
 		  style: [

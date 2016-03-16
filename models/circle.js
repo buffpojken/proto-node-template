@@ -19,7 +19,7 @@ module.exports = function(sequelize, DataTypes) {
     description:      DataTypes.TEXT
   }, {
     classMethods: {
-      fetch: function(node){
+      fetch: function(circle_id){
         return new Promise(function(resolve, reject){
           const query = [
             "MATCH (item {circle_id:{circle_id}}) RETURN item UNION MATCH (source)-[rel:PATH {circle_id:{circle_id}}]->(target) RETURN collect([target.uuid, source.uuid, id(rel)]) as item"
@@ -70,7 +70,7 @@ module.exports = function(sequelize, DataTypes) {
           resolve(nodes.concat(relations));
         });
       },
-      addNode: function(node){
+      addNode: function(node, circle_id){
         return new Promise(function(resolve, reject){
           const query = [
             "CREATE (node:Node {uuid:{uuid}, name:{name}, x:{x}, y:{y}, circle_id:{circle_id}})", 
@@ -94,7 +94,7 @@ module.exports = function(sequelize, DataTypes) {
           });
         });
       },
-      addEdge: function(data){
+      addEdge: function(data, circle_id){
         return new Promise(function(resolve, reject){
           const query = [
             "match (st:Node {uuid:{source}})",
@@ -117,7 +117,7 @@ module.exports = function(sequelize, DataTypes) {
           });
         });
       }, 
-      updateNode: function(node){
+      updateNode: function(node, circle_id){
         return new Promise(function(resolve, reject){
           const query = [
             "match (node:Node {uuid:{id}})",
