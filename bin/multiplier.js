@@ -12,12 +12,12 @@ program.version('0.0.1')
 program.command('duplicate').description("Clone a graph structure in neo4j").option('-d, --count <n>', "Number of duplicate", parseInt).
 option('-c, --circle_id <k>', "Circle Id").action(function(command){
 	let base_id = 1000;
-	db.Circle.fetch(command.circle_id.toString()).then((value) => {
+	db.PostgresCircle.fetch(command.circle_id.toString()).then((value) => {
 
 
 		var queue = async.queue(function(el, callback){
 			if(el.group == "nodes"){
-				db.Circle.addNode({
+				db.PostgresCircle.addNode({
 					id: el.id, 
 					position: {
 						x: el.renderedPosition.x, 
@@ -27,7 +27,7 @@ option('-c, --circle_id <k>', "Circle Id").action(function(command){
 					callback();
 				});
 			}else{
-				db.Circle.addEdge({
+				db.PostgresCircle.addEdge({
 					source: el.data.source, 
 					target: el.data.target
 				}, el.current_id).then(() => {
