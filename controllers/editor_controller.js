@@ -10,19 +10,19 @@ router.get('/', function(req, res){
 });
 
 router.get('/editor/graph', function(req, res){
-	db.PostgresCircle.fetch(123).then((value) => {
+	db.PostgresCircle.fetch(100).then((value) => {
 		res.send(value);
 	});
 });
 
 router.post('/editor/node', function(req, res){
-	db.PostgresCircle.addNode(req.body, "123").then((value) => {
+	db.PostgresCircle.addNode(req.body, 100).then((value) => {
 		res.send({});
 	});
 });
 
 router.put('/editor/node/:id', function(req, res){
-	db.PostgresCircle.updateNode(req.body, "123").then((value) => {
+	db.PostgresCircle.updateNode(req.body, 100).then((value) => {
 		res.send({});
 	});
 })
@@ -34,7 +34,7 @@ router.delete('/editor/node/:id', function(req, res){
 });
 
 router.post("/editor/edge", function(req, res){
-	db.PostgresCircle.addEdge(req.body,"123").then((value) => {
+	db.PostgresCircle.addEdge(req.body,100).then((value) => {
 		res.send({});
 	});
 });

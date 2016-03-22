@@ -2,7 +2,7 @@
 var _         = require('underscore');
 
 
-var circle_id = 123; 
+var circle_id = 100; 
 
 module.exports = function(sequelize, DataTypes) {
   var PostgresCircle = sequelize.define('PostgresCircle', {
@@ -14,7 +14,7 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     classMethods: {
       fetch: function(circle_id){
-        return Promise.all([PostgresCircle.findAll({where:{circle_id: 123}}), this.db.Edge.findAll({where:{circle_id: 123}})]).then(function(elements){
+        return Promise.all([PostgresCircle.findAll({where:{circle_id: circle_id}}), this.db.Edge.findAll({where:{circle_id: circle_id}})]).then(function(elements){
           return PostgresCircle.munge(elements[0].concat(elements[1]));
         })
       },
