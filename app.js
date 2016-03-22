@@ -1,10 +1,10 @@
-var winston 		= require('winston'); 
-var express			= require('express'); 
-var bodyParse		= require('body-parser'); 
-var multer 			= require('multer'); 
-var path 				= require('path')
-var glob 				= require('glob');
-var _ 					= require('underscore'); 
+var winston 			= require('winston'); 
+var express				= require('express'); 
+var bodyParse			= require('body-parser'); 
+var multer 				= require('multer'); 
+var path 					= require('path')
+var glob 					= require('glob');
+var _ 						= require('underscore'); 
 
 GLOBAL.logger = new (winston.Logger)({
   transports: [
@@ -14,7 +14,6 @@ GLOBAL.logger = new (winston.Logger)({
   ]
 });
 
-// Create an express-app
 var app					 = express(); 
 
 // Setup app with http body parsing, multibody (file upload) management, and a static folder.
