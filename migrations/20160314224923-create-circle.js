@@ -10,9 +10,19 @@ module.exports = {
       },
       name: {
         type: Sequelize.STRING
-      },    
-      description: {
-        type: Sequelize.TEXT
+      },
+      x: {
+        type: Sequelize.INTEGER
+      }, 
+      y: {
+        type: Sequelize.INTEGER
+      },
+      circle_id: {
+        type: Sequelize.INTEGER
+      },
+      uuid: {
+        type: Sequelize.STRING, 
+        unique: true
       },
       createdAt: {
         allowNull: false,
@@ -22,9 +32,15 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
-    });
+    }).then(function(){
+      return queryInterface.addIndex('Circles', ['circle_id', 'uuid'], {
+        indexName: "LookupIndex"
+      })      
+    })
   },
   down: function(queryInterface, Sequelize) {
-    return queryInterface.dropTable('Circles');
+    return queryInterface.dropTable('Circles').then(function(){
+      return queryInterface.removeIndex('Circles', 'LookupIndex')
+    });
   }
 };

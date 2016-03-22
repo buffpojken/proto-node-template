@@ -14,7 +14,7 @@ module.exports = {
         onDelete: "CASCADE", 
         onUpdate: "CASCADE", 
         references:{
-          model: 'postgrescircles', 
+          model: 'circles', 
           key: "uuid"
         }
       },
@@ -24,7 +24,7 @@ module.exports = {
         onDelete: "CASCADE", 
         onUpdate: "CASCADE", 
         references:{
-          model: 'postgrescircles', 
+          model: 'circles', 
           key: "uuid"
         }
       },

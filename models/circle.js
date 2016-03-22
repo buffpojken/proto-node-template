@@ -1,197 +1,94 @@
 'use strict';
+var _         = require('underscore');
 
-var Promise     = require('bluebird'); 
-var neo4j       = require('neo4j');
-var _           = require('underscore')
-
-var neo         = new neo4j.GraphDatabase({
-    // Support specifying database info via environment variables,
-    // but assume Neo4j installation defaults.
-    url: process.env['NEO4J_URL'] || process.env['GRAPHENEDB_URL'] ||
-        'http://neo4j:ninjamagick@localhost:7474',
-});
-
-var circle_id = "123"
+var circle_id = 100; 
 
 module.exports = function(sequelize, DataTypes) {
   var Circle = sequelize.define('Circle', {
-    name:             DataTypes.STRING, 
-    description:      DataTypes.TEXT
+    name: DataTypes.STRING, 
+    x: DataTypes.FLOAT, 
+    y: DataTypes.FLOAT, 
+    circle_id: DataTypes.INTEGER, 
+    uuid: DataTypes.STRING
   }, {
     classMethods: {
       fetch: function(circle_id){
-        return new Promise(function(resolve, reject){
-          const query = [
-            "MATCH (item {circle_id:{circle_id}}) RETURN item UNION MATCH (source)-[rel:PATH {circle_id:{circle_id}}]->(target) RETURN collect([target.uuid, source.uuid, id(rel)]) as item"
-          ].join("\n"); 
-          neo.cypher({
-            query:        query,
-            params: {
-              circle_id:  circle_id
-            }
-          }, function(err, results){
-            if(err){
-              reject(err)
-            }else{
-              resolve(Circle.munge(results))
-            }
-          });
-        });
+        return Promise.all([Circle.findAll({where:{circle_id: circle_id}}), this.db.Edge.findAll({where:{circle_id: circle_id}})]).then(function(elements){
+          return Circle.munge(elements[0].concat(elements[1]));
+        })
       },
-      munge: function(graphset){  
+      munge: function(elements){
         return new Promise(function(resolve, reject){          
-          const relationData = graphset.pop();
-          let nodes = _.map(graphset, function(result){
-            const item = result.item;
-            if(item._id != null){
+          resolve(_.map(elements, function(el){
+            if(el.x){
               return {
                 group: 'nodes', 
                 data: {
-                  id: item.properties.uuid,       
-                  uuid: item.properties.uuid
+                  id:     el.uuid, 
+                  uuid:   el.uuid
                 }, 
                 renderedPosition: {
-                  x: item.properties.x, 
-                  y: item.properties.y
+                  x:      el.x, 
+                  y:      el.y
+                }
+              }
+            }else{
+              return {
+                group: 'edges',
+                data: {
+                  id:       el.id, 
+                  source:   el.source_id, 
+                  target:   el.target_id
                 }
               }
             }
-          });
-          let relations = _.map(relationData.item, function(relation){
-            return {
-                group: 'edges',
-                data: {
-                  id:     relation[2],
-                  source: relation[0],
-                  target: relation[1]
-                }
-              }
-          })
-          resolve(nodes.concat(relations));
+          }));
         });
       },
       addNode: function(node, circle_id){
-        return new Promise(function(resolve, reject){
-          const query = [
-            "CREATE (node:Node {uuid:{uuid}, name:{name}, x:{x}, y:{y}, circle_id:{circle_id}})", 
-            "return node"
-          ].join("\n"); 
-          neo.cypher({
-            query: query, 
-            params: {
-              uuid:       node.id, 
-              name:       "An example node", 
-              x:          node.position.x, 
-              y:          node.position.y, 
-              circle_id:  circle_id
-            }
-          }, function(err, results){
-            if(err){
-              reject(err)
-            }else{
-              resolve(results);
-            }
-          });
-        });
+        return Circle.create({
+          uuid:         node.id, 
+          circle_id:    circle_id, 
+          x:            parseFloat(node.position.x), 
+          y:            parseFloat(node.position.y), 
+          name:         "An example node"
+        })      
       },
       addEdge: function(data, circle_id){
-        return new Promise(function(resolve, reject){
-          const query = [
-            "match (st:Node {uuid:{source}})",
-            "match (en:Node {uuid:{target}})", 
-            "create unique (st)-[:PATH {circle_id:{circle_id}}]->(en) return st, en"
-          ].join("\n"); 
-          neo.cypher({
-            query: query, 
-            params: {
-              source:     data.source,
-              target:     data.target, 
-              circle_id:  circle_id
-            }
-          }, function(err, results){
-            if(err){
-              reject(err)
-            }else{
-              resolve(results);
-            }
-          });
+        return this.db.Edge.create({
+          circle_id:    circle_id, 
+          source_id:    data.source, 
+          target_id:    data.target
         });
       }, 
       updateNode: function(node, circle_id){
-        return new Promise(function(resolve, reject){
-          const query = [
-            "match (node:Node {uuid:{id}})",
-            "set node = {data}"
-          ].join("\n"); 
-          console.log(node);
-          neo.cypher({
-            query: query, 
-            params: {
-              id:      node.id,
-              data: {
-                uuid:       node.id,
-                name:       "An example node", 
-                circle_id:  circle_id,
-                x:          node.position.x, 
-                y:          node.position.y
-              }
-            }
-          }, function(err, results){
-            if(err){
-              reject(err)
-            }else{
-              resolve(results);
-            }
-          });
-        });
+        return Circle.update({
+          x: parseFloat(node.position.x), 
+          y: parseFloat(node.position.y)
+        }, {
+          where: {
+            uuid: node.id
+          }
+        })
       }, 
       removeEdge: function(data){
-        return new Promise(function(resolve, reject){
-          const query = [
-            "match (st:Node {uuid:{source}})",
-            "match (en:Node {uuid:{target}})",
-            "match (st)-[rel:PATH]-(en) DELETE rel"
-          ].join("\n"); 
-          neo.cypher({
-            query: query, 
-            params: {
-              source:     data.source,
-              target:     data.target
-            }
-          }, function(err, results){
-            if(err){
-              reject(err)
-            }else{
-              resolve(results);
-            }
-          });
-        });
+        return this.db.Edge.destroy({
+          where: {
+            source_id: data.source, 
+            target_id: data.target 
+          }
+        })
       },
       removeNode: function(data){
-        return new Promise(function(resolve, reject){
-          const query = [
-            "match (st:Node {uuid:{source}}) DETACH DELETE st",
-          ].join("\n"); 
-          neo.cypher({
-            query: query, 
-            params: {
-              source:     data.id,
-            }
-          }, function(err, results){
-            if(err){
-              reject(err)
-            }else{
-              resolve(results);
-            }
-          });
-        });
+        return Circle.destroy({
+          where: {
+            uuid: data.id
+          }
+        })
       },
       associate: function(models) {
         // associations can be defined here
       }
-    }, 
-    instanceMethods: {
-
     }
   });
   return Circle;
