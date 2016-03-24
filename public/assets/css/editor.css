@@ -3,3 +3,12 @@
 	height:800px;
 	background-color:#eee;
 }
+
+.content{
+	width:500px;
+	margin:20px auto;
+}
+
+.highlight{
+	background-color:rgba(0,0,0,0.2);
+}

@@ -1,5 +1,4 @@
 var express 			= require('express'); 
-var moment 				= require('moment');
 var router 				= express.Router();
 var db 						= require('./../models'); 
 
