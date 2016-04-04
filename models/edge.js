@@ -5,6 +5,7 @@ module.exports = function(sequelize, DataTypes) {
     target_id: DataTypes.STRING, 
     circle_id: DataTypes.INTEGER
   }, {
+    tableName: 'edges',
     classMethods: {
       associate: function(models) {
         // associations can be defined here

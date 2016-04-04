@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   up: function(queryInterface, Sequelize) {
-    return queryInterface.createTable('Circles', {
+    return queryInterface.createTable('circles', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -33,14 +33,14 @@ module.exports = {
         type: Sequelize.DATE
       }
     }).then(function(){
-      return queryInterface.addIndex('Circles', ['circle_id', 'uuid'], {
+      return queryInterface.addIndex('circles', ['circle_id', 'uuid'], {
         indexName: "LookupIndex"
       })      
     })
   },
   down: function(queryInterface, Sequelize) {
-    return queryInterface.dropTable('Circles').then(function(){
-      return queryInterface.removeIndex('Circles', 'LookupIndex')
+    return queryInterface.dropTable('circles').then(function(){
+      return queryInterface.removeIndex('circles', 'LookupIndex')
     });
   }
 };
