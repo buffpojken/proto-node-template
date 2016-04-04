@@ -11,6 +11,9 @@ router.get('/', function(req, res){
 router.get('/editor/graph', function(req, res){
 	db.Circle.fetch(100).then((value) => {
 		res.send(value);
+	}).catch(function(err){
+		console.log(err);
+		res.status(500);
 	});
 });
 
