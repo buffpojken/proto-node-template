@@ -148,6 +148,7 @@ class Editor{
 
 $(function(){
 	var editor = new Editor(); 
+	alert("ninja")
 	editor.build();
 	editor.setTool();
 });
