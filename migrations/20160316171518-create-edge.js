@@ -31,11 +31,11 @@ module.exports = {
       circle_id: {
         type: Sequelize.INTEGER
       },
-      createdAt: {
+      createdat: {
         allowNull: false,
         type: Sequelize.DATE
       },
-      updatedAt: {
+      updatedat: {
         allowNull: false,
         type: Sequelize.DATE
       }
