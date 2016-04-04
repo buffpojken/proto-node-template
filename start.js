@@ -1,2 +1,5 @@
 var app = require('./app.js')
-app.listen(5000)
+
+app.set('port', (process.env.PORT || 3000));
+
+app.listen(app.get('port'))
