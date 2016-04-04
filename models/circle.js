@@ -9,9 +9,11 @@ module.exports = function(sequelize, DataTypes) {
     x: DataTypes.FLOAT, 
     y: DataTypes.FLOAT, 
     circle_id: DataTypes.INTEGER, 
-    uuid: DataTypes.STRING
+    uuid: DataTypes.STRING, 
   }, {
     tableName: 'circles',
+    createdAt: "createdat", 
+    updatedAt: "updatedat",
     classMethods: {
       fetch: function(circle_id){
         return Promise.all([Circle.findAll({where:{circle_id: circle_id}}), this.db.Edge.findAll({where:{circle_id: circle_id}})]).then(function(elements){
