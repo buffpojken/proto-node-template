@@ -12,12 +12,30 @@ class Editor{
 		});
 
 		this.remote = new Remote("editor", {}); 
+		this.contentEditor = new ContentEditor(this);
 	}
 
 	build(){
 		const _t = this;
 		
 		this.remote.get("graph").then((data) => {
+			console.log(data);
+			var urls = _.chain(data)
+				.filter(function(item){
+					return item.group == 'nodes' && item.data.url != '';
+				})
+				.map(function(item){
+					return item.data.url;
+				})
+				.uniq()
+				.value();
+
+			if (urls.length > 0) {
+				setTimeout(function(){
+					_t.contentEditor.load(urls);
+				}, 1);
+			}
+
 			this.graph.build(data);			
 
 			// These are inherently temporal - and will be moved onto the graph-lib interface!
@@ -124,7 +142,7 @@ class Editor{
 	// Content Management
 
 	openContentEditor(element){
-		this.contentEditor = true
+		this.contentEditor.open(element);
 		console.log("manage content editing for...")
 	}
 
@@ -141,6 +159,80 @@ class Editor{
 		     return (c=='x' ? r : (r&0x3|0x8)).toString(16);
 		 });
 		 return uuid;
+	}
+
+}
+
+class ContentEditor {
+	constructor(editor) {
+		const _t = this;
+
+		this.editor = editor;
+		this.embed_url = document.getElementById('embed_url');
+		this.preview = document.getElementById('preview');
+		this.remote = new Remote("embed", {});
+		this.current_element = false;
+
+		this.cache = {};
+
+		this.embed_url.addEventListener('keyup', function(evt) {
+			if (evt.keyCode == 13) {
+				var url = _t.embed_url.value;
+				_t.editor.remote.put("node/url", {
+					id: 	_t.current_element.id(),
+					url: 	url
+				}).then(result => {
+					console.log("node moved")
+				}).catch(error => {
+
+				});
+				_t.render(url);
+			}
+		});
+	}
+
+	load(urls) {
+		const _t = this;
+		this.remote.get('', {urls: urls}).then((data) => {
+			_.each(data, function(embed, key){
+				_t.cache[urls[key]] = data[key];
+			});
+		}).catch((err) => {
+			console.log(err);
+		});
+	}
+
+	open(element) {
+		this.current_element = element;
+
+		this.preview.innerHTML = '';
+
+		var url = element.data('url');
+		this.embed_url.value = url;
+		if (url) {
+			this.render(url);
+		}
+	}
+
+	render(url) {
+		const _t = this;
+
+		if (this.cache[url] !== undefined) {
+			console.log('hit!', url);
+			this._render(this.cache[url]);
+		} else {
+			console.log('miss!', url);
+			this.remote.get('', {urls: [url]}).then((data) => {
+				_t.cache[url] = data[0];
+				_t._render(data[0]);
+			}).catch((err) => {
+				console.log(err);
+			});
+		}
+	}
+
+	_render(embed) {
+		this.preview.innerHTML = '<iframe src="' + embed.url + '" width="' + embed.width + '" height="' + embed.height + '" frameborder="0" allowfullscreen />';
 	}
 
 }

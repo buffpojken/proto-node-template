@@ -6,6 +6,7 @@ var circle_id = 100;
 module.exports = function(sequelize, DataTypes) {
   var Circle = sequelize.define('Circle', {
     name: DataTypes.STRING, 
+    url: DataTypes.STRING,
     x: DataTypes.FLOAT, 
     y: DataTypes.FLOAT, 
     circle_id: DataTypes.INTEGER, 
@@ -28,7 +29,8 @@ module.exports = function(sequelize, DataTypes) {
                 group: 'nodes', 
                 data: {
                   id:     el.uuid, 
-                  uuid:   el.uuid
+                  uuid:   el.uuid,
+                  url:    el.url || ''
                 }, 
                 renderedPosition: {
                   x:      el.x, 
@@ -74,6 +76,15 @@ module.exports = function(sequelize, DataTypes) {
           }
         })
       }, 
+      updateUrl: function(node, circle_id){
+        return Circle.update({
+          url: node.url,
+        }, {
+          where: {
+            uuid: node.id
+          }
+        })
+      },
       removeEdge: function(data){
         return this.db.Edge.destroy({
           where: {
